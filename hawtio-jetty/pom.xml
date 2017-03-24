@@ -1,0 +1,106 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.samples</groupId>
+    <artifactId>hawtio-jetty</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>war</packaging>
+    <name>Bravura Hawtio</name>
+
+    <description>A simple wrapper around the Hawtio console with ability for Jetty deployment via 'mvn jetty:run'. Envisaged for use in local development environments.</description>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <jettyplugin.version>9.2.15.v20160210</jettyplugin.version>
+        <jetty.scan.interval>0</jetty.scan.interval>
+        <jetty.http.port>8085</jetty.http.port>
+        <jetty.stop.port>9990</jetty.stop.port>
+        <jetty.stop.key>HAWTIO_STOP</jetty.stop.key>
+        <hawtio.version>1.4.61</hawtio.version>
+        <java.version>1.7</java.version>        
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.hawt</groupId>
+            <artifactId>hawtio-default</artifactId>
+            <version>${hawtio.version}</version>
+            <!-- NOTE this WAR dependency type which enables this WAR to inherit all 
+                the plugins and content from the hawtio-default WAR -->
+            <type>war</type>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <defaultGoal>install</defaultGoal>
+        <plugins>
+
+            <!-- No web xml provided, supress warnings -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.6</version>
+                <configuration>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                </configuration>
+            </plugin>
+
+            <!-- plugin so you can run mvn jetty:run -->
+            <plugin>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
+                <version>${jettyplugin.version}</version>
+                <configuration>
+                    <scanIntervalSeconds>${jetty.scan.interval}</scanIntervalSeconds>
+                    <stopPort>${jetty.stop.port}</stopPort>
+                    <stopKey>${jetty.stop.key}</stopKey>
+                    <webAppConfig>
+                        <contextPath>/</contextPath>
+                    </webAppConfig>
+                    <systemProperties>
+                        <!-- Prevent need for Hawtio authentication - authentication not currently 
+                            supported -->
+                        <systemProperty>
+                            <key>hawtio.authenticationEnabled</key>
+                            <value>false</value>
+                        </systemProperty>
+                        <systemProperty>
+                            <key>jetty.port</key>
+                            <value>${jetty.http.port}</value>
+                        </systemProperty>
+                        <systemProperty>
+                            <key>jetty.stop.port</key>
+                            <value>${jetty.stop.port}</value>
+                        </systemProperty>
+                        <!-- Run hawtio in offline mode. When in offline mode, some plugins 
+                            are not enabled -->
+                        <systemProperty>
+                            <key>hawtio.offline</key>
+                            <value>true</value>
+                        </systemProperty>
+                    </systemProperties>
+                </configuration>
+				<!-- Stop any previous instance of the server before running Jetty using 
+					stopPort and stopKey -->
+                <executions> 
+                    <execution>
+                        <id>stop-jetty</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>stop</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.3</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>           
+        </plugins>
+    </build>
+</project>
