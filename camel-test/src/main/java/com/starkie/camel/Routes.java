@@ -36,11 +36,6 @@ public class Routes extends RouteBuilder {
 		swaggerHandler();
     }
 
-    /**
-     * TODO jolokia
-     * activemq start
-     * 		http://localhost:8161/admin/
-     */
 	private void jmsHandler() {
 		from("file://C://temp//cameltest?move=.done")
 			//.process("testProcessor")
@@ -48,9 +43,6 @@ public class Routes extends RouteBuilder {
 			.to("activemq:LukeQ1");
 	}
 
-	/**
-	 * http://localhost:8080/camel/api-doc
-	 */
 	private void swaggerHandler() {
 		restConfiguration()
 			.bindingMode(RestBindingMode.json)
@@ -61,9 +53,6 @@ public class Routes extends RouteBuilder {
 			.apiProperty("cors", "true");
 	}
 	
-	/**
-	 * http://localhost:8080/camel/chat/hello
-	 */
 	private void restHandler() {
 		rest("/chat")
 			.produces("text/plain")

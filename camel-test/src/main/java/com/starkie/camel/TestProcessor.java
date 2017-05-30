@@ -9,9 +9,6 @@ public class TestProcessor implements Processor {
 
 	@Override
 	public void process(Exchange exchange) throws Exception {
-		//System.out.println(exchange);
-	    // String payload = exchange.getIn().getBody(String.class);
-	    // System.out.println(payload);
 	     exchange.getIn().setBody("Changed body");
 	}
 
