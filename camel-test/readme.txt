@@ -22,3 +22,7 @@ Spring Boot - MVC
 	http://localhost:8080
 	http://localhost:8080/hello
 	http://localhost:8080/home
+	
+Spring JPA Data with REST
+	http://localhost:8080/people
+	https://spring.io/guides/gs/accessing-data-rest/
